@@ -1,0 +1,68 @@
+#!/usr/bin/bash/python3
+
+#Provides functions for interacting with the operating system
+import os
+#To use functions that access information of the underlying platform
+import platform
+#Allows to send HTTP requests using Python
+import requests
+#Contains the disk.usage() method which provide disk usage statistics 
+import shutil
+
+#Credit:https://docs.python.org/3/library/platform.html
+#Obtain what kind of operating system is being used (Linux/Windows)
+os_info=platform.system()
+#Obtain the underlying system’s release.
+os_release=platform.release()
+#Obtain only the release of the operating system
+os_version=platform.version()
+
+#Display the complete OS version information to the user 
+print("You are using",os_release,os_info, "operating system with the OS version", os_version,"\n") 
+
+#Obtain private ip address using ifconfig and conducting text manipulation utilising the system method 
+print("Your private ip address is:") 
+os.system("ifconfig | grep 'broadcast'| awk '{print $2}' | head -n 1")
+
+#Obtain your private address from calling https://api.ipify.org
+#Credit:https://www.w3schools.com/python/module_requests.asp
+public_add=requests.get('https://api.ipify.org').text
+print("Your public ip address is:",public_add)
+
+#print default gateway 
+#Obtain default ip address using ip route show command together with the system method in os
+print("Your default gateway: ")
+os.system("ip route show | grep 'default' | awk '{print $3}'")
+print("\n")
+
+#To display the total hard disk size,available , utilised space and available to use space
+print("Your hard disk information are as below:")
+#disk.usage() method returns the total, used and free which are the amount of total, used and free space, in bytes and then convert to gigabytes
+#Credit:https://www.geeksforgeeks.org/python-shutil-disk_usage-method-2/
+total,used,free = shutil.disk_usage("/")
+print("Total hard disk availble: %d GiB" % (total // (2**30)))
+print("Used hard disk space: %d GiB" % (used // (2**30)))
+print("Free hard disk space: %d GiB" % (free // (2**30)))
+
+#Store list of all items in your current working directory
+dir_items=os.listdir()
+count=0
+print("\n")
+#Display the top five directories only and their size
+print("The top five directories and their sizes are:")
+
+#Loop through all items in the current directory
+#Filter out only directories 
+#Get size of the filtered directories
+#When count reaches five then it exits loop so that only the top five directories are displayed
+for item in dir_items:
+	if os.path.isdir(item)==True:
+		count=count+1
+		print("Directory:",item,"and File size:",os.path.getsize(item))
+		if count==5:
+			break
+print("\n")
+#Display the CPU usage and refresh every 10 seconds
+#top command in linux displays information about cpu and memory usage which is executed with the system method in os
+print("Display CPU usage information:") 
+os.system('top -d 10')
